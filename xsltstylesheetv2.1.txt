@@ -1,0 +1,301 @@
+<?xml version="1.0"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:marc="http://www.loc.gov/MARC21/slim" version="2.0">
+        <xsl:output method="xml" encoding="UTF-8" indent="yes"/>
+        <xsl:template match="node()">
+                <xsl:copy>
+                        <xsl:apply-templates select="@*|node()"/>
+                </xsl:copy>
+        </xsl:template>
+        <xsl:template match="marc:record">
+                <marc:record>
+                        <bib_id>
+                                <xsl:value-of select="replace(marc:controlfield[@tag='001']/text(), '. ', '')"/>
+                        </bib_id>
+                        <date_earliest>
+                                <xsl:value-of select="substring(marc:controlfield[@tag='008']/text(),8,4)"/>
+                        </date_earliest>
+                        <date_latest>
+                                <xsl:value-of select="substring(marc:controlfield[@tag='008']/text(),12,4)"/>
+                        </date_latest>
+                        <artist>
+                                <artist_name>
+                                        <xsl:value-of select="replace(marc:datafield[@tag='100']/marc:subfield[@code='a'],'[\.:,]$','')"/>
+                                </artist_name>
+                                <artist_name_num>
+                                        <xsl:value-of select="marc:datafield[@tag='100']/marc:subfield[@code='b']/node()"/>
+                                </artist_name_num>
+                                <artist_name_title>
+                                        <xsl:value-of select="marc:datafield[@tag='100']/marc:subfield[@code='c']/node()"/>
+                                </artist_name_title>
+                                <artist_dates>
+                                        <xsl:value-of select="replace(marc:datafield[@tag='100']/marc:subfield[@code='d'],'[\.:,]$','$1')"/>
+                                </artist_dates>
+                                <attr_qualifier>
+                                        <xsl:value-of select="replace(marc:datafield[@tag='100']/marc:subfield[@code='j'],'[\.:,]$','')"/>
+                                </attr_qualifier>
+                                <attr_role>
+                                        <xsl:value-of select="replace(marc:datafield[@tag='100']/marc:subfield[@code='j'],'[\.:,]$','')"/>
+                                </attr_role>
+                        </artist>
+                        <title>
+                                <xsl:value-of select="replace(marc:datafield[@tag='245']/marc:subfield[@code='a'],'[\.:,]$','')"/>
+                        </title>
+                        <alt_title>
+                                <xsl:value-of select="replace(marc:datafield[@tag='246'][1]/marc:subfield[@code='a']/node(),'\s$','')"/>
+                        </alt_title>
+                        <xsl:for-each select="marc:datafield[@tag='246'][2]/marc:subfield[@code='a']">
+                                <alt_title>
+                                        <xsl:value-of select="node()"/>
+                                </alt_title>
+                        </xsl:for-each>
+                        <artwork_date>
+                                <xsl:value-of select="replace(marc:datafield[@tag='260']/marc:subfield[@code='c']/node(),'[\.:,]$','')"/>
+                        </artwork_date>
+                        <description>
+                                <description_photograph>
+                                        <xsl:value-of select="marc:datafield[@tag='300']/marc:subfield[@code='e']/node()"/>
+                                        <xsl:text> </xsl:text>
+                                        <xsl:value-of select="replace(marc:datafield[@tag='300']/marc:subfield[@code='a']/node(),'[\.:,]$','')"/>
+                                </description_photograph>
+                                <description_artwork>
+                                        <xsl:value-of select="replace(marc:datafield[@tag='300']/marc:subfield[@code='a']/node(),'[\.:,]$','')"/>
+                                </description_artwork>
+                        </description>
+                        <artwork_dimensions>
+                                <inches>
+                                        <xsl:value-of select="marc:datafield[@tag='340']/marc:subfield[@code='b']/node()[contains(., 'in.')]"/>
+                                </inches>
+                                <centimeters>
+                                        <xsl:value-of select="marc:datafield[@tag='340']/marc:subfield[@code='b']/node()[contains(., 'cm.')]"/>
+                                </centimeters>
+                                <millimeters>
+                                        <xsl:value-of select="marc:datafield[@tag='340']/marc:subfield[@code='b']/node()[contains(., 'mm.')]"/>
+                                </millimeters>
+                        </artwork_dimensions>
+                        <artwork_medium>
+                                <xsl:value-of select="replace(marc:datafield[@tag='340']/marc:subfield[@code='c']/node(),'[\.:,]$','')"/>
+                        </artwork_medium>
+                        <series_statement>
+                                <xsl:value-of select="replace(marc:datafield[@tag='490'][@ind1='1']/marc:subfield[@code='a']/node(),'[\.:,]$','')"/>
+                        </series_statement>
+                        <xsl:for-each select="marc:datafield[@tag='561']/marc:subfield[@code='a']">
+                                <provenance>
+                                        <xsl:value-of select="replace(node(),'[\.:;,]$','')"/>
+                                </provenance>
+                        </xsl:for-each>
+                        <current_repository>
+                                <collection_name>
+                                        <xsl:value-of select="replace(marc:datafield[@tag='590'][@ind1='1']/marc:subfield[@code='a']/node(),'[\.:,]$','')"/>
+                                </collection_name>
+                                <collection_city>
+                                        <xsl:value-of select="replace(marc:datafield[@tag='590'][@ind1='1']/marc:subfield[@code='b']/node(),'[\.:,]$','')"/>
+                                </collection_city>
+                                <collection_state>
+                                        <xsl:value-of select="replace(marc:datafield[@tag='590'][@ind1='1']/marc:subfield[@code='c']/node(),'[\.:,]$','')"/>
+                                </collection_state>
+                                <collection_country>
+                                        <xsl:value-of select="replace(marc:datafield[@tag='590'][@ind1='1']/marc:subfield[@code='d']/node(),'[\.:,]$','')"/>
+                                </collection_country>
+                                <collection_credit>
+                                        <xsl:value-of select="replace(marc:datafield[@tag='590'][@ind1='1']/marc:subfield[@code='e']/node(),'[\.:,]$','')"/>
+                                </collection_credit>
+                                <collection_acc_no>
+                                        <xsl:value-of select="replace(marc:datafield[@tag='590'][@ind1='1']/marc:subfield[@code='f']/node(),'[\.:,]$','')"/>
+                                </collection_acc_no>
+                        </current_repository>
+                        <condition_history>
+                                <xsl:value-of select="replace(marc:datafield[@tag='590'][@ind1='3']/marc:subfield[@code='a']/node(),'[\.:;,]$','')"/>
+                        </condition_history>
+                        <color_note>
+                                <xsl:value-of select="replace(marc:datafield[@tag='590'][@ind1='4']/marc:subfield[@code='a']/node(),'[\.:;,]$','')"/>
+                        </color_note>
+                        <attr_history>
+                                <xsl:value-of select="replace(marc:datafield[@tag='590'][@ind1='5']/marc:subfield[@code='a']/node(),'[\.:;,]$','')"/>
+                        </attr_history>
+                        <title_history>
+                                <xsl:value-of select="replace(marc:datafield[@tag='590'][@ind1='6']/marc:subfield[@code='a']/node(),'[\.:;,]$','')"/>
+                        </title_history>
+                        <subject_biographical>
+                                <xsl:value-of select="replace(marc:datafield[@tag='590'][@ind1='7']/marc:subfield[@code='a']/node(),'[\.:;,]$','')"/>
+                        </subject_biographical>
+                        <related_works>
+                                <xsl:value-of select="replace(marc:datafield[@tag='590'][@ind1='8']/marc:subfield[@code='a']/node(),'[\.:;,]$','')"/>
+                        </related_works>
+                        <images>
+                                <xsl:for-each select="marc:datafield[@tag='590'][@ind1='9']">
+                                        <image>
+                                                <image_type>
+                                                        <xsl:value-of select="replace(marc:subfield[@code='a']/node(),'[\.:,]$','')"/>
+                                                </image_type>
+                                                <photographer>
+                                                        <xsl:value-of select="marc:subfield[@code='b']/node()"/>
+                                                </photographer>
+                                                <negative_not_FARL>
+                                                        <xsl:value-of select="marc:subfield[@code='c']/node()"/>
+                                                </negative_not_FARL>
+                                                <negative_FARL>
+                                                        <xsl:value-of select="marc:subfield[@code='d']/node()"/>
+                                                </negative_FARL>
+                                                <digital>
+                                                        <xsl:value-of select="marc:subfield[@code='g']/node()"/>
+                                                </digital>
+                                                <Gernsheim_no>
+                                                        <xsl:value-of select="marc:subfield[@code='i']/node()"/>
+                                                </Gernsheim_no>
+                                                <acq_type>
+                                                        <xsl:value-of select="marc:subfield[@code='j']/node()"/>
+                                                </acq_type>
+                                                <acq_source>
+                                                        <xsl:value-of select="marc:subfield[@code='k']/node()"/>
+                                                </acq_source>
+                                                <acq_date>
+                                                        <xsl:value-of select="marc:subfield[@code='l']/node()"/>
+                                                </acq_date>
+                                                <image_description>
+                                                        <xsl:value-of select="marc:subfield[@code='m']/node()"/>
+                                                </image_description>
+                                                <image_rights>
+                                                        <xsl:value-of select="marc:subfield[@code='o']/node()"/>
+                                                </image_rights>
+                                        </image>
+                                </xsl:for-each>
+                        </images>
+                        <inscription>
+                                <xsl:value-of select="marc:datafield[@tag='562']/marc:subfield[@code='a']/node()"/>
+                        </inscription>
+                        <exhibition>
+                                <xsl:value-of select="marc:datafield[@tag='585']/marc:subfield[@code='a']/node()"/>
+                        </exhibition>
+                        <sources>
+                                <xsl:value-of select="marc:datafield[@tag='556']/marc:subfield[@code='a']/node()"/>
+                        </sources>
+                        <xsl:for-each select="marc:datafield[@tag='600']">
+                                <LC_subject_name>
+                                        <name>
+                                                <xsl:value-of select="replace(marc:subfield[@code='a']/node(),'[\.:,]$','')"/>
+                                        </name>
+                                        <name_num>
+                                                <xsl:value-of select="marc:subfield[@code='b']/node()"/>
+                                        </name_num>
+                                        <name_title>
+                                                <xsl:value-of select="marc:subfield[@code='c']/node()"/>
+                                        </name_title>
+                                        <dates>
+                                                <xsl:value-of select="replace(marc:subfield[@code='d']/node(),'[\.:,]$','')"/>
+                                        </dates>
+                                </LC_subject_name>
+                        </xsl:for-each>
+                        <LC_subject_topical>
+                                <xsl:value-of select="marc:datafield[@tag='650'][@ind2='0']/marc:subfield[@code='a']/node()"/>
+                        </LC_subject_topical>
+                        <xsl:for-each select="marc:datafield[@tag='650'][@ind2='7']">
+                                <farl_subject>
+                                        <xsl:value-of select="replace(marc:subfield[@code='a']/node(),'[\.:,]$','')"/>
+                                </farl_subject>
+                        </xsl:for-each>
+                        <xsl:for-each select="marc:datafield[@tag='655'][@ind2='7']">
+                                <genre>
+                                        <term>
+                                                <xsl:value-of select="replace(marc:subfield[@code='a']/node(),'[\.:,]$','')"/>
+                                        </term>
+                                        <term>
+                                                <term_label>
+                                                        <xsl:value-of select="replace(marc:subfield[@code='b']/node(),'[\.:,]$','')"/>
+                                                </term_label>
+                                        </term>
+                                        <term_src>
+                                                <xsl:value-of select="replace(marc:subfield[@code='2']/node(),'[\.:,]$','')"/>
+                                        </term_src>
+                                </genre>
+                        </xsl:for-each>
+                        <xsl:for-each select="marc:datafield[@tag='700']">
+                                <alt_artist>
+                                        <artist_name>
+                                                <xsl:value-of select="replace(marc:subfield[@code='a']/node(),'[\.:,]$','')"/>
+                                        </artist_name>
+                                        <artist_name_num>
+                                                <xsl:value-of select="marc:subfield[@code='b']/node()"/>
+                                        </artist_name_num>
+                                        <artist_name_title>
+                                                <xsl:value-of select="replace(marc:subfield[@code='c']/node(),'[\.:,]$','')"/>
+                                        </artist_name_title>
+                                        <artist_dates>
+                                                <xsl:value-of select="replace(marc:subfield[@code='d'],'[\.:,]$','')"/>
+                                        </artist_dates>
+                                        <attr_role>
+                                                <xsl:value-of select="replace(marc:subfield[@code='e']/node(),'[\.:,]$','')"/>
+                                        </attr_role>
+                                        <attr_qualifier>
+                                                <xsl:value-of select="replace(marc:subfield[@code='j']/node(),'[\.:,]$','')"/>
+                                        </attr_qualifier>
+                                        <attr_role>
+                                                <xsl:value-of select="replace(marc:subfield[@code='a']/node(),'[\.:,]$','')"/>
+                                        </attr_role>
+                                </alt_artist>
+                        </xsl:for-each>
+                        <related_corps>
+                                <xsl:for-each select="marc:datafield[@tag='710'][@ind1='2']">
+                                        <xsl:if test="marc:subfield[@code='a'] != 'Frick Art Reference Library.' ">
+                                                <corp_name>
+                                                        <xsl:value-of select="replace(marc:subfield[@code='a']/node(),'[\.:;,]$','')"/>
+                                                </corp_name>
+                                        </xsl:if>
+                                </xsl:for-each>
+                        </related_corps>
+                        <series>
+                                <xsl:value-of select="replace(marc:datafield[@tag='773'][@ind1='0']/marc:subfield[@code='t']/node(),'[\.:;,]\s$|[\.:;,]$','')"/>
+                        </series>
+                        <xsl:for-each select="marc:datafield[@tag='774'][@ind1='0']">
+                                <constituent>
+                                        <xsl:value-of select="replace(marc:subfield[@code='t']/node(),'[\.:;,]\s$|[\.:;,]$','')"/>
+                                </constituent>
+                        </xsl:for-each>
+                        <priv_coll_named>
+                                <xsl:value-of select="marc:datafield[@tag='790'][@ind1='0']/marc:subfield[@code='a']/node()"/>
+                        </priv_coll_named>
+                        <priv_coll_unnamed>
+                                <xsl:value-of select="marc:datafield[@tag='791'][@ind1='2']/marc:subfield[@code='a']/node()"/>
+                        </priv_coll_unnamed>
+                        <xsl:for-each select="marc:datafield[@tag='792']">
+                                <farl_artist_name>
+                                        <farl_name>
+                                                <xsl:value-of select="replace(marc:subfield[@code='a']/node(),'[\.:,]$','')"/>
+                                        </farl_name>
+                                        <farl_name_dates>
+                                                <xsl:value-of select="replace(marc:subfield[@code='d']/node(),'[\.:,]$','')"/>
+                                        </farl_name_dates>
+                                        <attr_role>
+                                                <xsl:value-of select="replace(marc:subfield[@code='e']/node(),'[\.:,]$','')"/>
+                                        </attr_role>
+                                        <attr_qualifier>
+                                                <xsl:value-of select="replace(marc:subfield[@code='j']/node(),'[\.:,]$','')"/>
+                                        </attr_qualifier>
+                                </farl_artist_name>
+                        </xsl:for-each>
+                        <xsl:for-each select="marc:datafield[@tag='856'][@ind1='4']">
+                        <xsl:variable name="digiLink" select="marc:subfield[@code='u']"/>
+                        <imageLink>
+                                <xsl:if test="contains($digiLink, 'digitalcollections')">
+                                        <xsl:value-of select="$digiLink/node()"/>
+                                        </xsl:if>
+                                </imageLink>
+                                </xsl:for-each>
+                        <xsl:for-each select="marc:datafield[@tag='852'][@ind1='8']">
+                                <location>
+                                        <marc_org_code>
+                                                <xsl:value-of select="marc:subfield[@code='a']/node()"/>
+                                        </marc_org_code>
+                                        <call_no>
+                                                <xsl:value-of select="replace(marc:subfield[@code='h']/node(),'[\.:,]$|\s$','')"/>
+                                        </call_no>
+                                </location>
+                        </xsl:for-each>
+                        <inv_amer_ptgs>
+                                <xsl:value-of select="marc:datafield[@tag='981']/marc:subfield[@code='a']/node()"/>
+                        </inv_amer_ptgs>
+                        <repro_count>
+                                <xsl:value-of select="marc:datafield[@tag='983']/marc:subfield[@code='a']/node()"/>
+                        </repro_count>
+                </marc:record>
+        </xsl:template>
+</xsl:stylesheet>
